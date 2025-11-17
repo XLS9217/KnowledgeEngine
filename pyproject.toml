@@ -1,7 +1,40 @@
 [project]
-name = "nlpenginex"
+name = "nlptaskengine"
 version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
+description = "Useing local model to complete low level nlp task"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    # Server libs
+    "fastapi>=0.118.3",
+    "uvicorn>=0.37.0",
+
+    # Core ML / DL libraries
+    "torch>=2.7.0",
+    "torchvision>=0.24.0",
+    "einops>=0.8.1",
+    "peft>=0.17.1", # parameter-efficient fine-tuning
+    "transformers[torch]>=4.57.1",
+
+    # NLP / LLM utilities
+    "llmlingua", # prompt compression / token importance
+    "openai>=2.7.2", # online LLM API
+
+    # Data processing / numerical
+    "scipy>=1.16.3",
+    "scikit-learn>=1.7.2",
+    "umap-learn>=0.5.0",
+    "hdbscan>=0.8.40",
+
+    # Vector database client
+    "qdrant-client>=1.15.1",
+]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu126" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
