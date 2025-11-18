@@ -1,5 +1,5 @@
 from pathlib import Path
-from transformers import AutoModel
+from transformers import AutoModel, AutoTokenizer
 
 
 # Global model registry

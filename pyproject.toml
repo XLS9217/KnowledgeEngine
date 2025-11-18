@@ -24,6 +24,7 @@ dependencies = [
     # Vector database client
     "qdrant-client>=1.15.1",
     "pydantic>=2.12.4",
+    "huggingface-hub>=0.36.0",
 ]
 
 [tool.uv.sources]

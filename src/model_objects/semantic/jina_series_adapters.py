@@ -82,3 +82,13 @@ class JinaEmbeddingsV2BaseZH(EmbeddingModelBase):
         """
         embeddings = self.model.encode(text)
         return embeddings
+
+
+@register_model
+class JinaEmbeddingsV4(EmbeddingModelBase):
+    model_id = "jinaai/jina-embeddings-v4"
+
+    def get_embedding(self, text: str):
+        """Generate embeddings for input text."""
+        embeddings = self.model.encode_text(texts=[text], task="text-matching")
+        return embeddings[0]
