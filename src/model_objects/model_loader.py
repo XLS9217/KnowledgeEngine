@@ -35,7 +35,7 @@ class ModelLoader:
     def load_model(
             cls,
             model_name: str,
-            force_local_only: bool = False,
+            force_local_only: bool = True,
             device: str = "cpu"
     ):
         """
@@ -76,8 +76,7 @@ class ModelLoader:
         # Move to device
         hf_model = hf_model.to(device)
 
-        # Create wrapper instance with device parameter
-        wrapper_instance = wrapper_class(device=device)
-        wrapper_instance.model = hf_model
+        # Create wrapper instance with device and model
+        wrapper_instance = wrapper_class(device=device, model=hf_model)
 
         return wrapper_instance
