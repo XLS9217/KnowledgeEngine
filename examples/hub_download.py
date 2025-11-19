@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 
 # Set cache directory
-CACHE_DIR = Path(__file__).parent.parent / "model_cache"
+CACHE_DIR = Path(r"E:\model_cache")
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 # Set HuggingFace cache to use our custom cache directory
@@ -14,7 +14,7 @@ os.environ["HF_HUB_CACHE"] = str(CACHE_DIR)
 from huggingface_hub import snapshot_download
 
 # Download microsoft/llmlingua-2-bert-base-multilingual-cased-meetingbank
-model_id = "deepseek-ai/DeepSeek-OCR"
+model_id = "openai/clip-vit-base-patch32"
 
 print(f"Downloading {model_id} to {CACHE_DIR}")
 snapshot_path = snapshot_download(

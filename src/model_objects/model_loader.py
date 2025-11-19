@@ -29,7 +29,7 @@ class ModelLoader:
     """
 
     # Define cache directory relative to project root
-    CACHE_DIR = Path(__file__).parent.parent.parent / "model_cache"
+    CACHE_DIR = Path(r"E:\model_cache")
 
     @classmethod
     def load_model(

@@ -4,7 +4,7 @@ import torch
 from transformers import AutoModel
 from numpy.linalg import norm
 
-CACHE_DIR = Path(__file__).parent.parent / "model_cache"
+CACHE_DIR = Path(r"E:\model_cache")
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 os.environ['HF_HUB_OFFLINE'] = '1'
