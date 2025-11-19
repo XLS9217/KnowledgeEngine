@@ -1,4 +1,5 @@
 from typing import Optional, Literal
+from transformers import AutoModel
 from src.model_objects.model_loader import register_model
 from src.model_objects.model_bases import EmbeddingModelBase
 
@@ -8,7 +9,6 @@ class JinaEmbeddingsV3(EmbeddingModelBase):
 
     model_id = "jinaai/jina-embeddings-v3"
 
-    # Supported tasks for LoRA adapters
     SUPPORTED_TASKS = [
         "retrieval.query",
         "retrieval.passage",
@@ -17,13 +17,21 @@ class JinaEmbeddingsV3(EmbeddingModelBase):
         "text-matching"
     ]
 
-    # Supported embedding dimensions (Matryoshka embeddings)
     SUPPORTED_DIMENSIONS = [32, 64, 128, 256, 512, 768, 1024]
 
-    def __init__(self, device: str, model):
-        super().__init__(device, model)
+    def __init__(self):
+        super().__init__()
         self.task: Optional[str] = None
         self.embedding_size: int = 512
+
+    def initialize(self, model_name: str, device: str, model_path: str):
+        self.device = device
+        self.model = AutoModel.from_pretrained(
+            model_name,
+            cache_dir=model_path,
+            local_files_only=True,
+            trust_remote_code=True
+        ).to(device)
 
     def set_task(self, task: Optional[Literal["retrieval.query", "retrieval.passage", "separation", "classification", "text-matching"]]):
         """Set the task type for LoRA adapter. Set to None to disable task-specific encoding."""
@@ -70,16 +78,16 @@ class JinaEmbeddingsV3(EmbeddingModelBase):
 class JinaEmbeddingsV2BaseZH(EmbeddingModelBase):
     model_id = "jinaai/jina-embeddings-v2-base-zh"
 
+    def initialize(self, model_name: str, device: str, model_path: str):
+        self.device = device
+        self.model = AutoModel.from_pretrained(
+            model_name,
+            cache_dir=model_path,
+            local_files_only=True,
+            trust_remote_code=True
+        ).to(device)
+
     def get_embedding(self, text: str):
-        """
-        Generate embeddings for input text.
-
-        Args:
-            text: Single text string to encode
-
-        Returns:
-            Embeddings vector
-        """
         embeddings = self.model.encode(text)
         return embeddings
 
@@ -88,7 +96,15 @@ class JinaEmbeddingsV2BaseZH(EmbeddingModelBase):
 class JinaEmbeddingsV4(EmbeddingModelBase):
     model_id = "jinaai/jina-embeddings-v4"
 
+    def initialize(self, model_name: str, device: str, model_path: str):
+        self.device = device
+        self.model = AutoModel.from_pretrained(
+            model_name,
+            cache_dir=model_path,
+            local_files_only=True,
+            trust_remote_code=True
+        ).to(device)
+
     def get_embedding(self, text: str):
-        """Generate embeddings for input text."""
         embeddings = self.model.encode_text(texts=[text], task="text-matching")
         return embeddings[0]
