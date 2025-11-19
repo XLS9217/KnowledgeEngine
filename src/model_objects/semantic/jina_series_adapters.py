@@ -1,6 +1,6 @@
-from typing import Optional, Literal, Union, List
+from typing import Optional, Literal
 from src.model_objects.model_loader import register_model
-from src.model_objects.semantic.model_bases import EmbeddingModelBase
+from src.model_objects.model_bases import EmbeddingModelBase
 
 
 @register_model

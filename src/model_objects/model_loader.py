@@ -1,5 +1,7 @@
 from pathlib import Path
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModel, AutoModelForCausalLM, AutoTokenizer
+
+from src.model_objects.model_bases import RerankerModelBase
 
 
 # Global model registry

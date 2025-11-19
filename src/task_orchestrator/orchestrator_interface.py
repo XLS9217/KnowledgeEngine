@@ -7,6 +7,9 @@ class OrchestratorInterface:
     @classmethod
     def initialize(cls, engine_name:str):
 
-        #right now just this, according to folders
+        #according to folders, import by if
         if engine_name == "asyncio_ray_engine":
+            pass
+
+        elif engine_name == "single_process_engine":
             pass

@@ -1,5 +1,5 @@
 from src.model_objects import register_model
-from src.model_objects.semantic.model_bases import EmbeddingModelBase, RerankerModelBase
+from src.model_objects.model_bases import EmbeddingModelBase, RerankerModelBase
 
 
 @register_model
@@ -23,6 +23,3 @@ class Qwen3Embedding06B(EmbeddingModelBase):
 @register_model
 class Qwen3Reranker06B(RerankerModelBase):
     model_id = "Qwen/Qwen3-Reranker-0.6B"
-
-    def rerank(self, text_list: list[str]):
-        pass
