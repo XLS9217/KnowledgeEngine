@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.task_orchestrator.load_request_struct import LoadRequestStruct
+from src.task_orchestrator.engine_request_struct import LoadRequestStruct, TaskRequestStruct
 
 
 class OrchestratorEngineBase(ABC):
@@ -27,4 +27,8 @@ class OrchestratorEngineBase(ABC):
 
     @abstractmethod
     def load_clip_model(self, model_name: str, device: str = "cpu", extra_params: dict = None):
+        pass
+
+    @abstractmethod
+    def add_task(self, task: TaskRequestStruct):
         pass
