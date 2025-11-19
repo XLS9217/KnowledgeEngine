@@ -37,6 +37,7 @@ class ModelLoader:
             model_name: str,
             force_local_only: bool = True,
             device: str = "cpu"
+
     ):
         """
         Load a model using the registered model class.

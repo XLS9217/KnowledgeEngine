@@ -14,7 +14,7 @@ os.environ["HF_HUB_CACHE"] = str(CACHE_DIR)
 from huggingface_hub import snapshot_download
 
 # Download microsoft/llmlingua-2-bert-base-multilingual-cased-meetingbank
-model_id = "openai/clip-vit-base-patch32"
+model_id = "Qwen/Qwen3-Reranker-0.6B"
 
 print(f"Downloading {model_id} to {CACHE_DIR}")
 snapshot_path = snapshot_download(

@@ -21,7 +21,7 @@ def cosine_similarity(vec1, vec2) -> float:
 print(DeviceWatcher.get_available_device())
 
 model = ModelLoader.load_model(
-    "jinaai/jina-embeddings-v4" ,
+    "jinaai/jina-embeddings-v3" ,
     device="cuda",
     force_local_only = True
 )
