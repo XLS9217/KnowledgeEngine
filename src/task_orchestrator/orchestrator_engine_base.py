@@ -5,7 +5,8 @@ class OrchestratorEngineBase(ABC):
     def __init__(self):
         pass
 
-    def start_engine(self, **kwargs):
+    @abstractmethod
+    def start_engine(self, model_list:list[str]):
         pass
 
     @abstractmethod
