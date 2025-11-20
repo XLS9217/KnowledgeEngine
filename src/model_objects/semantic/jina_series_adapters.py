@@ -73,6 +73,33 @@ class JinaEmbeddingsV3(EmbeddingModelBase):
 
         return embeddings
 
+    def get_embeddings(self, text_list: list[str]):
+        """
+        Generate embeddings for multiple texts using current task and embedding_size settings.
+
+        Args:
+            text_list: List of text strings to encode
+
+        Returns:
+            List of dicts with 'text' and 'embedding' keys
+        """
+        # Prepare model encoding parameters
+        encode_kwargs = {
+            'truncate_dim': self.embedding_size
+        }
+
+        # Only add task parameter if it's set
+        if self.task is not None:
+            encode_kwargs['task'] = self.task
+
+        # Encode texts
+        embeddings = self.model.encode(text_list, **encode_kwargs)
+
+        return [
+            {"text": text, "embedding": embedding.tolist()}
+            for text, embedding in zip(text_list, embeddings)
+        ]
+
 
 @register_model
 class JinaEmbeddingsV2BaseZH(EmbeddingModelBase):
@@ -91,6 +118,13 @@ class JinaEmbeddingsV2BaseZH(EmbeddingModelBase):
         embeddings = self.model.encode(text)
         return embeddings
 
+    def get_embeddings(self, text_list: list[str]):
+        embeddings = self.model.encode(text_list)
+        return [
+            {"text": text, "embedding": embedding.tolist()}
+            for text, embedding in zip(text_list, embeddings)
+        ]
+
 
 @register_model
 class JinaEmbeddingsV4(EmbeddingModelBase):
@@ -108,3 +142,10 @@ class JinaEmbeddingsV4(EmbeddingModelBase):
     def get_embedding(self, text: str):
         embeddings = self.model.encode_text(texts=[text], task="text-matching")
         return embeddings[0]
+
+    def get_embeddings(self, text_list: list[str]):
+        embeddings = self.model.encode_text(texts=text_list, task="text-matching")
+        return [
+            {"text": text, "embedding": embedding.tolist()}
+            for text, embedding in zip(text_list, embeddings)
+        ]

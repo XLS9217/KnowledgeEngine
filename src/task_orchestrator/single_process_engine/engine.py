@@ -49,7 +49,13 @@ class SingleProcessEngine(OrchestratorEngineBase):
         if task.task_type == "embedding":
             if self.embedding_model is None:
                 raise ValueError("No embedding model loaded")
-            return self.embedding_model.get_embedding(task.task_params["text"])
+
+            if task.task_name == "get_embedding":
+                return self.embedding_model.get_embedding(task.task_params["text"])
+            elif task.task_name == "get_embeddings":
+                return self.embedding_model.get_embeddings(task.task_params["text_list"])
+            else:
+                raise ValueError(f"Unknown embedding task_name: {task.task_name}")
 
         elif task.task_type == "rerank":
             if self.reranker_model is None:

@@ -24,6 +24,14 @@ class OrchestratorInterface:
             task_params={"text": text}
         ))
 
+    @classmethod
+    async def get_embeddings(cls, text_list: list[str]):
+        return await cls.engine.execute_task(TaskRequestStruct(
+            task_type="embedding",
+            task_name="get_embeddings",
+            task_params={"text_list": text_list}
+        ))
+
     # Reranker tasks
     @classmethod
     async def rerank(cls, query: str, documents: list[str], top_k: int):

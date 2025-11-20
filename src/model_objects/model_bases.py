@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from typing import List
+
 from PIL.Image import Image
 
 class ModelBase(ABC):
@@ -21,6 +23,19 @@ class EmbeddingModelBase(ModelBase):
 
     @abstractmethod
     def get_embedding(self, text: str):
+        pass
+
+    @abstractmethod
+    def get_embeddings(self, text_list: List[str]) -> List[dict]:
+        """
+        Generate embeddings for multiple texts.
+
+        Args:
+            text_list: List of text strings to encode
+
+        Returns:
+            List of dicts with 'text' and 'embedding' keys
+        """
         pass
 
 

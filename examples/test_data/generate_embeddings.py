@@ -10,14 +10,7 @@ async def generate_embeddings_for_dialog(dialog: list[str], output_filename: str
     """Generate embeddings for a dialog and save to JSON file."""
     print(f"Processing {len(dialog)} sentences...")
 
-    results = []
-    for i, sentence in enumerate(dialog):
-        print(f"  {i+1}/{len(dialog)}: {sentence[:50]}...")
-        embedding = await OrchestratorInterface.get_embedding(sentence)
-        results.append({
-            "sentence": sentence,
-            "embedding": embedding.tolist()
-        })
+    results = await OrchestratorInterface.get_embeddings(dialog)
 
     output_path = Path(__file__).parent / output_filename
     with open(output_path, "w", encoding="utf-8") as f:

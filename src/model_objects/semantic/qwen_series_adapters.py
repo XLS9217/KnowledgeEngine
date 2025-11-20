@@ -21,6 +21,13 @@ class Qwen3Embedding06B(EmbeddingModelBase):
         embeddings = self.model.encode(text)
         return embeddings
 
+    def get_embeddings(self, text_list: list[str]):
+        embeddings = self.model.encode(text_list)
+        return [
+            {"text": text, "embedding": embedding.tolist()}
+            for text, embedding in zip(text_list, embeddings)
+        ]
+
 
 @register_model
 class Qwen3Reranker06B(RerankerModelBase):
