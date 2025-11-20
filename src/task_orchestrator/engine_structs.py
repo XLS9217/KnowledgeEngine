@@ -14,7 +14,7 @@ class LoadRequestStruct(BaseModel):
 
 
 class TaskRequestStruct(BaseModel):
-    task_type: ModelType  # Must be one of: "embedding", "reranker", "clip"
+    task_type: TaskType  # Must be one of: "embedding", "rerank", "clip", "algorithm"
     task_name: str
     task_params: dict
 

@@ -51,7 +51,7 @@ class SingleProcessEngine(OrchestratorEngineBase):
                 raise ValueError("No embedding model loaded")
             return self.embedding_model.get_embedding(task.task_params["text"])
 
-        elif task.task_type == "reranker":
+        elif task.task_type == "rerank":
             if self.reranker_model is None:
                 raise ValueError("No reranker model loaded")
             return self.reranker_model.rerank(

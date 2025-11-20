@@ -28,7 +28,7 @@ class OrchestratorInterface:
     @classmethod
     async def rerank(cls, query: str, documents: list[str], top_k: int):
         return await cls.engine.execute_task(TaskRequestStruct(
-            task_type="reranker",
+            task_type="rerank",
             task_name="rerank",
             task_params={"query": query, "documents": documents, "top_k": top_k}
         ))

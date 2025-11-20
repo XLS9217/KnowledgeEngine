@@ -8,7 +8,7 @@ model = ModelLoader.load_model(
 )
 
 # Load image
-image_path = Path(__file__).parent / "page.png"
+image_path = Path(__file__).parent.parent / "page.png"
 image = Image.open(image_path)
 
 # Test texts
