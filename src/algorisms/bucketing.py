@@ -2,12 +2,21 @@ import numpy as np
 from typing import Literal, TypedDict
 
 from src.algorisms.algorism_structs import SentenceEmbedding
-from src.algorisms.vector_operation import cosine_similarity, dot_product
 
 
 class BucketResult(TypedDict):
     bucket: str
     sentences: list[str]
+
+
+def _cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
+    """Calculate cosine similarity between two vectors."""
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+
+def _dot_product(a: np.ndarray, b: np.ndarray) -> float:
+    """Calculate dot product between two vectors."""
+    return np.dot(a, b)
 
 
 def similarity_bucketing(
@@ -30,7 +39,7 @@ def similarity_bucketing(
     Returns:
         List of buckets with assigned sentences
     """
-    score_func = cosine_similarity if score_method == "cosine" else dot_product
+    score_func = _cosine_similarity if score_method == "cosine" else _dot_product
 
     # Initialize bucket results
     bucket_results: list[BucketResult] = [

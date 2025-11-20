@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.metrics import silhouette_score
 
 from src.algorisms.algorism_structs import SentenceEmbedding
 
@@ -44,6 +45,45 @@ def agglomerative(data: list[SentenceEmbedding], n_clusters: int, linkage: str =
 
     clusters = [[] for _ in range(n_clusters)]
     for idx, label in enumerate(labels):
+        clusters[label].append(data[idx]["sentence"])
+
+    return clusters
+
+
+def auto_agglomerative(data: list[SentenceEmbedding], max_clusters: int, linkage: str = "ward") -> list[list[str]]:
+    """
+    Automatically determine optimal number of clusters using silhouette score.
+
+    Args:
+        data: List of dicts with 'sentence' and 'embedding' keys
+        max_clusters: Maximum number of clusters to try
+        linkage: Linkage criterion ('ward', 'complete', 'average', 'single')
+
+    Returns:
+        List of clusters, each containing sentences in that cluster
+    """
+    embeddings = np.array([item["embedding"] for item in data])
+
+    best_score = -1
+    best_n_clusters = 2
+    best_labels = None
+
+    # Try different numbers of clusters
+    for n_clusters in range(2, min(max_clusters + 1, len(data))):
+        agg = AgglomerativeClustering(n_clusters=n_clusters, linkage=linkage)
+        labels = agg.fit_predict(embeddings)
+
+        score = silhouette_score(embeddings, labels)
+        if score > best_score:
+            best_score = score
+            best_n_clusters = n_clusters
+            best_labels = labels
+
+    print(f"Optimal clusters: {best_n_clusters} (silhouette score: {best_score:.4f})")
+
+    # Build clusters with best labels
+    clusters = [[] for _ in range(best_n_clusters)]
+    for idx, label in enumerate(best_labels):
         clusters[label].append(data[idx]["sentence"])
 
     return clusters
