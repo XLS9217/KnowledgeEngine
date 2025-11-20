@@ -1,5 +1,5 @@
 from PIL.Image import Image
-from src.task_orchestrator.engine_request_struct import TaskRequestStruct
+from src.task_orchestrator.engine_structs import TaskRequestStruct, LoadRequestStruct
 
 
 class OrchestratorInterface:
@@ -13,11 +13,12 @@ class OrchestratorInterface:
         elif engine_name == "single_process_engine":
             from src.task_orchestrator.single_process_engine.engine import SingleProcessEngine
             cls.engine = SingleProcessEngine()
+            cls.engine.start_engine()
 
     # Embedding tasks
     @classmethod
-    def get_embedding(cls, text: str):
-        return cls.engine.add_task(TaskRequestStruct(
+    async def get_embedding(cls, text: str):
+        return await cls.engine.execute_task(TaskRequestStruct(
             task_type="embedding",
             task_name="get_embedding",
             task_params={"text": text}
@@ -25,8 +26,8 @@ class OrchestratorInterface:
 
     # Reranker tasks
     @classmethod
-    def rerank(cls, query: str, documents: list[str], top_k: int):
-        return cls.engine.add_task(TaskRequestStruct(
+    async def rerank(cls, query: str, documents: list[str], top_k: int):
+        return await cls.engine.execute_task(TaskRequestStruct(
             task_type="reranker",
             task_name="rerank",
             task_params={"query": query, "documents": documents, "top_k": top_k}
@@ -34,16 +35,16 @@ class OrchestratorInterface:
 
     # CLIP tasks
     @classmethod
-    def get_clip_score(cls, img: Image, text: str):
-        return cls.engine.add_task(TaskRequestStruct(
+    async def get_clip_score(cls, img: Image, text: str):
+        return await cls.engine.execute_task(TaskRequestStruct(
             task_type="clip",
             task_name="get_clip_score",
             task_params={"img": img, "text": text}
         ))
 
     @classmethod
-    def get_clip_scores(cls, img: Image, texts: list[str]):
-        return cls.engine.add_task(TaskRequestStruct(
+    async def get_clip_scores(cls, img: Image, texts: list[str]):
+        return await cls.engine.execute_task(TaskRequestStruct(
             task_type="clip",
             task_name="get_clip_scores",
             task_params={"img": img, "texts": texts}

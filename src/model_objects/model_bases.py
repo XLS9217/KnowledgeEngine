@@ -1,52 +1,47 @@
 from abc import ABC, abstractmethod
 from PIL.Image import Image
 
-
-class EmbeddingModelBase(ABC):
+class ModelBase(ABC):
 
     def __init__(self):
-        self.type = "embedding"
+        self.type = "model"
         self.device = None
         self.model = None
-        self.tokenizer = None
 
     @abstractmethod
     def initialize(self, model_name:str, device:str, model_path:str):
         pass
+
+class EmbeddingModelBase(ModelBase):
+
+    def __init__(self):
+        super().__init__()
+        self.type = "embedding"
+        self.tokenizer = None
 
     @abstractmethod
     def get_embedding(self, text: str):
         pass
 
 
-class RerankerModelBase(ABC):
+class RerankerModelBase(ModelBase):
 
     def __init__(self):
+        super().__init__()
         self.type = "reranker"
-        self.device = None
-        self.model = None
         self.tokenizer = None
-
-    @abstractmethod
-    def initialize(self, model_name:str, device:str, model_path:str):
-        pass
 
     @abstractmethod
     def rerank(self, query:str , document:list[str], top_k:int):
         # return the top k from documents
         pass
 
-class CLIPModelBase(ABC):
+class CLIPModelBase(ModelBase):
 
     def __init__(self):
+        super().__init__()
         self.type = "clip"
-        self.device = None
-        self.model = None
         self.processor = None
-
-    @abstractmethod
-    def initialize(self, model_name: str, device: str, model_path: str):
-        pass
 
     @abstractmethod
     def get_clip_score(self, img: Image , text: str):

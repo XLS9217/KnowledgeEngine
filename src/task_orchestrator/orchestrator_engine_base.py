@@ -1,34 +1,27 @@
 from abc import ABC, abstractmethod
 
-from src.task_orchestrator.engine_request_struct import LoadRequestStruct, TaskRequestStruct
+from src.task_orchestrator.engine_structs import LoadRequestStruct, TaskRequestStruct
 
 
 class OrchestratorEngineBase(ABC):
 
     def __init__(self):
-        self._models = {}
+        self.engine_name = "base_engine"
 
-    def start_engine(self, model_list: list[LoadRequestStruct]):
-        for request in model_list:
-            if request.model_type == "embedding":
-                self.load_embedding_model(request.model_name, request.device, request.extra_params)
-            elif request.model_type == "reranker":
-                self.load_reranker_model(request.model_name, request.device, request.extra_params)
-            elif request.model_type == "clip":
-                self.load_clip_model(request.model_name, request.device, request.extra_params)
+    def start_engine(self):
+        """Initialize engine and load default models"""
+        self._engine_init()
 
     @abstractmethod
-    def load_embedding_model(self, model_name: str, device: str = "cpu", extra_params: dict = None):
+    def _engine_init(self):
+        """Engine-specific initialization - load models here"""
         pass
 
     @abstractmethod
-    def load_reranker_model(self, model_name: str, device: str = "cpu", extra_params: dict = None):
+    def load_model(self, model_request: LoadRequestStruct):
+        """Load a single model based on request"""
         pass
 
     @abstractmethod
-    def load_clip_model(self, model_name: str, device: str = "cpu", extra_params: dict = None):
-        pass
-
-    @abstractmethod
-    def add_task(self, task: TaskRequestStruct):
+    async def execute_task(self, task: TaskRequestStruct):
         pass
