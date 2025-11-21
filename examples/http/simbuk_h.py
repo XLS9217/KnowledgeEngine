@@ -64,7 +64,7 @@ def test_similarity_bucketing(sentences: list[str], bucket_topics: list[str], la
                 "buckets": buckets,
                 "score_method": "cosine",
                 "allow_orphan_bucket": True,
-                "orphan_threshold": 0.3
+                "orphan_threshold": 0.1
             }
         )
 
