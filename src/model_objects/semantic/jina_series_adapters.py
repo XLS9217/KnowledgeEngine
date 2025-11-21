@@ -57,7 +57,7 @@ class JinaEmbeddingsV3(EmbeddingModelBase):
             text: Single text string to encode
 
         Returns:
-            Embeddings with shape (embedding_size,)
+            List representation of embedding with shape (embedding_size,)
         """
         # Prepare model encoding parameters
         encode_kwargs = {
@@ -71,7 +71,7 @@ class JinaEmbeddingsV3(EmbeddingModelBase):
         # Encode text
         embeddings = self.model.encode(text, **encode_kwargs)
 
-        return embeddings
+        return embeddings.tolist()
 
     def get_embeddings(self, text_list: list[str]):
         """
@@ -116,7 +116,7 @@ class JinaEmbeddingsV2BaseZH(EmbeddingModelBase):
 
     def get_embedding(self, text: str):
         embeddings = self.model.encode(text)
-        return embeddings
+        return embeddings.tolist()
 
     def get_embeddings(self, text_list: list[str]):
         embeddings = self.model.encode(text_list)
@@ -141,7 +141,7 @@ class JinaEmbeddingsV4(EmbeddingModelBase):
 
     def get_embedding(self, text: str):
         embeddings = self.model.encode_text(texts=[text], task="text-matching")
-        return embeddings[0]
+        return embeddings[0].tolist()
 
     def get_embeddings(self, text_list: list[str]):
         embeddings = self.model.encode_text(texts=text_list, task="text-matching")

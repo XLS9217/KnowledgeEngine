@@ -28,6 +28,8 @@ dependencies = [
     "addict>=2.4.0",
     "matplotlib>=3.10.7",
     "easydict>=1.13",
+    "python-multipart>=0.0.20",
+    "sentence-transformers>=5.1.2",
 ]
 
 [tool.uv.sources]

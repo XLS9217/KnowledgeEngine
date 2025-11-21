@@ -1,5 +1,6 @@
 import torch
-from transformers import AutoModel, AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from sentence_transformers import SentenceTransformer
 from src.model_objects import register_model
 from src.model_objects.model_bases import EmbeddingModelBase, RerankerModelBase
 
@@ -10,19 +11,20 @@ class Qwen3Embedding06B(EmbeddingModelBase):
 
     def initialize(self, model_name: str, device: str, model_path: str):
         self.device = device
-        self.model = AutoModel.from_pretrained(
+        self.model = SentenceTransformer(
             model_name,
-            cache_dir=model_path,
+            cache_folder=model_path,
             local_files_only=True,
-            trust_remote_code=True
-        ).to(device)
+            trust_remote_code=True,
+            device=device
+        )
 
     def get_embedding(self, text: str):
-        embeddings = self.model.encode(text)
+        embeddings = self.model.encode(text, convert_to_numpy=True)
         return embeddings
 
     def get_embeddings(self, text_list: list[str]):
-        embeddings = self.model.encode(text_list)
+        embeddings = self.model.encode(text_list, convert_to_numpy=True)
         return [
             {"text": text, "embedding": embedding.tolist()}
             for text, embedding in zip(text_list, embeddings)

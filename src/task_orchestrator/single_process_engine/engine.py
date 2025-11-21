@@ -3,7 +3,8 @@ from concurrent.futures import ThreadPoolExecutor
 from src.task_orchestrator.engine_structs import TaskRequestStruct, LoadRequestStruct
 from src.task_orchestrator.orchestrator_engine_base import OrchestratorEngineBase
 from src.model_objects.model_loader import ModelLoader
-
+from src.algorisms.clustering import k_means, agglomerative, auto_agglomerative
+from src.algorisms.bucketing import similarity_bucketing
 
 class SingleProcessEngine(OrchestratorEngineBase):
 
@@ -17,7 +18,7 @@ class SingleProcessEngine(OrchestratorEngineBase):
 
     def _engine_init(self):
         """Load default models for single process engine"""
-        self.embedding_model = ModelLoader.load_model("jinaai/jina-embeddings-v2-base-zh", "cuda")
+        self.embedding_model = ModelLoader.load_model("Qwen/Qwen3-Embedding-0.6B", "cuda")
         self.reranker_model = ModelLoader.load_model("Qwen/Qwen3-Reranker-0.6B", "cuda")
         self.clip_model = ModelLoader.load_model("openai/clip-vit-base-patch32", "cuda")
 
@@ -91,8 +92,6 @@ class SingleProcessEngine(OrchestratorEngineBase):
 
     def _execute_algorithm_task(self, task: TaskRequestStruct):
         """Execute algorithm tasks (clustering, bucketing, etc.)"""
-        from src.algorisms.clustering import k_means, agglomerative, auto_agglomerative
-        from src.algorisms.bucketing import similarity_bucketing
 
         if task.task_name == "k_means":
             return k_means(
