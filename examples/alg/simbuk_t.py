@@ -30,7 +30,7 @@ async def main():
     for topic in bucket_topics:
         embedding = await OrchestratorInterface.get_embedding(topic)
         buckets.append({
-            "sentence": topic,
+            "text": topic,
             "embedding": embedding.tolist()
         })
 

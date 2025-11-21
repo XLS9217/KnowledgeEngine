@@ -57,3 +57,44 @@ class OrchestratorInterface:
             task_name="get_clip_scores",
             task_params={"img": img, "texts": texts}
         ))
+
+    # Algorithm tasks - Clustering
+    @classmethod
+    async def k_means(cls, data: list[dict], n_clusters: int):
+        return await cls.engine.execute_task(TaskRequestStruct(
+            task_type="algorithm",
+            task_name="k_means",
+            task_params={"data": data, "n_clusters": n_clusters}
+        ))
+
+    @classmethod
+    async def agglomerative(cls, data: list[dict], n_clusters: int, linkage: str = "ward"):
+        return await cls.engine.execute_task(TaskRequestStruct(
+            task_type="algorithm",
+            task_name="agglomerative",
+            task_params={"data": data, "n_clusters": n_clusters, "linkage": linkage}
+        ))
+
+    @classmethod
+    async def auto_agglomerative(cls, data: list[dict], max_clusters: int, linkage: str = "ward"):
+        return await cls.engine.execute_task(TaskRequestStruct(
+            task_type="algorithm",
+            task_name="auto_agglomerative",
+            task_params={"data": data, "max_clusters": max_clusters, "linkage": linkage}
+        ))
+
+    # Algorithm tasks - Bucketing
+    @classmethod
+    async def similarity_bucketing(cls, data: list[dict], buckets: list[dict], score_method: str = "cosine",
+                                    allow_orphan_bucket: bool = False, orphan_threshold: float = 0.5):
+        return await cls.engine.execute_task(TaskRequestStruct(
+            task_type="algorithm",
+            task_name="similarity_bucketing",
+            task_params={
+                "data": data,
+                "buckets": buckets,
+                "score_method": score_method,
+                "allow_orphan_bucket": allow_orphan_bucket,
+                "orphan_threshold": orphan_threshold
+            }
+        ))

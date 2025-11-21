@@ -2,5 +2,5 @@
 from typing import TypedDict
 
 class SentenceEmbedding(TypedDict):
-    sentence: str
+    text: str
     embedding: list[float]

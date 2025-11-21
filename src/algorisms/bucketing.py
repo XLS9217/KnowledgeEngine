@@ -43,7 +43,7 @@ def similarity_bucketing(
 
     # Initialize bucket results
     bucket_results: list[BucketResult] = [
-        {"bucket": bucket["sentence"], "sentences": []}
+        {"bucket": bucket["text"], "sentences": []}
         for bucket in buckets
     ]
 
@@ -67,8 +67,8 @@ def similarity_bucketing(
 
         # Assign to bucket or orphan
         if allow_orphan_bucket and best_score < orphan_threshold:
-            bucket_results[-1]["sentences"].append(item["sentence"])
+            bucket_results[-1]["sentences"].append(item["text"])
         else:
-            bucket_results[best_bucket_idx]["sentences"].append(item["sentence"])
+            bucket_results[best_bucket_idx]["sentences"].append(item["text"])
 
     return bucket_results

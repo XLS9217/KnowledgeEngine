@@ -83,5 +83,45 @@ class SingleProcessEngine(OrchestratorEngineBase):
             else:
                 raise ValueError(f"Unknown CLIP task_name: {task.task_name}")
 
+        elif task.task_type == "algorithm":
+            return self._execute_algorithm_task(task)
+
         else:
             raise ValueError(f"Unknown task_type: {task.task_type}")
+
+    def _execute_algorithm_task(self, task: TaskRequestStruct):
+        """Execute algorithm tasks (clustering, bucketing, etc.)"""
+        from src.algorisms.clustering import k_means, agglomerative, auto_agglomerative
+        from src.algorisms.bucketing import similarity_bucketing
+
+        if task.task_name == "k_means":
+            return k_means(
+                data=task.task_params["data"],
+                n_clusters=task.task_params["n_clusters"]
+            )
+
+        elif task.task_name == "agglomerative":
+            return agglomerative(
+                data=task.task_params["data"],
+                n_clusters=task.task_params["n_clusters"],
+                linkage=task.task_params.get("linkage", "ward")
+            )
+
+        elif task.task_name == "auto_agglomerative":
+            return auto_agglomerative(
+                data=task.task_params["data"],
+                max_clusters=task.task_params["max_clusters"],
+                linkage=task.task_params.get("linkage", "ward")
+            )
+
+        elif task.task_name == "similarity_bucketing":
+            return similarity_bucketing(
+                data=task.task_params["data"],
+                buckets=task.task_params["buckets"],
+                score_method=task.task_params.get("score_method", "cosine"),
+                allow_orphan_bucket=task.task_params.get("allow_orphan_bucket", False),
+                orphan_threshold=task.task_params.get("orphan_threshold", 0.5)
+            )
+
+        else:
+            raise ValueError(f"Unknown algorithm task_name: {task.task_name}")
