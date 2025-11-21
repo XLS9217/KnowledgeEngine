@@ -18,7 +18,7 @@ class SingleProcessEngine(OrchestratorEngineBase):
 
     def _engine_init(self):
         """Load default models for single process engine"""
-        self.embedding_model = ModelLoader.load_model("Qwen/Qwen3-Embedding-0.6B", "cuda")
+        self.embedding_model = ModelLoader.load_model("jinaai/jina-embeddings-v2-base-zh", "cuda")
         self.reranker_model = ModelLoader.load_model("Qwen/Qwen3-Reranker-0.6B", "cuda")
         self.clip_model = ModelLoader.load_model("openai/clip-vit-base-patch32", "cuda")
 

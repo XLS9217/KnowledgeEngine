@@ -2,6 +2,9 @@ import requests
 import numpy as np
 
 
+BASE_URL = "http://localhost:7009/api/v1"
+
+
 def cosine_similarity(vec1, vec2) -> float:
     """Calculate cosine similarity between two vectors."""
     vec1 = np.array(vec1)
@@ -9,30 +12,59 @@ def cosine_similarity(vec1, vec2) -> float:
     return float(np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
 
 
-# Base URL of the API
-BASE_URL = "http://localhost:7009/api/v1"
+def test_embedding_http():
+    """Test embedding API with sample texts in English and Chinese."""
+    print(f"\n{'='*60}")
+    print(f"Testing Embedding API")
+    print(f"{'='*60}")
+
+    try:
+        # Test texts
+        text1_en = "hello world"
+        text2_zh = "你好世界"
+        text3_zh = "傻逼玩意儿"
+
+        # Get embedding for text1
+        response = requests.post(
+            f"{BASE_URL}/embedding",
+            json={"text": text1_en}
+        )
+        ebd1 = response.json()["embedding"]
+
+        # Get embedding for text2
+        response = requests.post(
+            f"{BASE_URL}/embedding",
+            json={"text": text2_zh}
+        )
+        ebd2 = response.json()["embedding"]
+
+        # Get embedding for text3
+        response = requests.post(
+            f"{BASE_URL}/embedding",
+            json={"text": text3_zh}
+        )
+        ebd3 = response.json()["embedding"]
+
+        # Calculate similarities
+        sim_en_zh = cosine_similarity(ebd1, ebd2)
+        sim_zh_zh = cosine_similarity(ebd3, ebd2)
+
+        # Print results
+        print(f"Text 1 (EN): '{text1_en}'")
+        print(f"Text 2 (ZH): '{text2_zh}'")
+        print(f"Text 3 (ZH): '{text3_zh}'")
+        print(f"\nSimilarity (EN-ZH): {sim_en_zh:.4f}")
+        print(f"Similarity (ZH-ZH): {sim_zh_zh:.4f}")
+        print(f"\nTest PASSED")
+
+    except Exception as e:
+        print(f"Test FAILED")
+        print(f"Error: {str(e)}")
 
 
-def get_embedding(text: str):
-    """Get embedding for a single text via HTTP API."""
-    response = requests.post(
-        f"{BASE_URL}/embedding",
-        json={"text": text}
-    )
-    response.raise_for_status()
-    return response.json()["embedding"]
+if __name__ == "__main__":
+    print("Make sure the server is running on http://localhost:7009")
+    print("Start server with: python main.py")
 
+    test_embedding_http()
 
-# Test the embedding endpoint with the same logic as ebd_t.py
-print("Testing embedding endpoint...")
-
-ebd1 = get_embedding("hello world")
-print(f"Generated embedding for 'hello world' with dimension: {len(ebd1)}")
-
-ebd2 = get_embedding("hello there")
-similarity_12 = cosine_similarity(ebd1, ebd2)
-print(f"Cosine similarity between 'hello world' and 'hello there': {similarity_12:.4f}")
-
-ebd3 = get_embedding("goodbye")
-similarity_23 = cosine_similarity(ebd3, ebd2)
-print(f"Cosine similarity between 'goodbye' and 'hello there': {similarity_23:.4f}")
