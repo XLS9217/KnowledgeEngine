@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
+import os
 
 from src.utils.setup_logging import my_logger_setup, get_my_logger
 from src.routers.system_router import router as system_router
@@ -21,8 +22,9 @@ app.include_router(system_router)
 app.include_router(service_router)
 
 if __name__ == "__main__":
+    port = int(os.getenv("PORT", 7009))
     uvicorn.run(
         app,
         host="0.0.0.0",
-        port=7009
+        port=port
     )
