@@ -19,6 +19,7 @@ class EmbeddingRequest(BaseModel):
 
 class EmbeddingResponse(BaseModel):
     embedding: List[float] = Field(..., description="Generated embedding vector")
+    model_name: Optional[str] = Field(None, description="Name/ID of the model used")
 
 
 @router.post("/embedding", response_model=EmbeddingResponse)
@@ -26,7 +27,24 @@ async def get_embedding(request: EmbeddingRequest) -> EmbeddingResponse:
     """Generate embedding for a single text."""
     try:
         result = await OrchestratorInterface.get_embedding(request.text)
-        return EmbeddingResponse(embedding=result)
+        # result may be a dict with keys: model_name, result; or a raw embedding list
+        if isinstance(result, dict):
+            # Prefer model_name from orchestrator; fallback to engine's currently loaded model
+            engine_model_name = None
+            try:
+                engine_model_name = getattr(OrchestratorInterface.engine.embedding_model, "model_name", None)
+            except Exception:
+                engine_model_name = None
+            model_name = result.get("model_name") or engine_model_name
+            return EmbeddingResponse(embedding=result.get("result"), model_name=model_name)
+        else:
+            # Fallback: obtain model_name from the currently loaded engine model
+            engine_model_name = None
+            try:
+                engine_model_name = getattr(OrchestratorInterface.engine.embedding_model, "model_name", None)
+            except Exception:
+                engine_model_name = None
+            return EmbeddingResponse(embedding=result, model_name=engine_model_name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -42,6 +60,7 @@ class EmbeddingItem(BaseModel):
 
 class EmbeddingsResponse(BaseModel):
     embeddings: List[EmbeddingItem] = Field(..., description="List of text-embedding pairs")
+    model_name: Optional[str] = Field(None, description="Name/ID of the model used")
 
 
 @router.post("/embeddings", response_model=EmbeddingsResponse)
@@ -49,8 +68,18 @@ async def get_embeddings(request: EmbeddingsRequest) -> EmbeddingsResponse:
     """Generate embeddings for multiple texts."""
     try:
         result = await OrchestratorInterface.get_embeddings(request.text_list)
-        embeddings = [EmbeddingItem(text=item["text"], embedding=item["embedding"]) for item in result]
-        return EmbeddingsResponse(embeddings=embeddings)
+        # result is expected to be a dict with keys: model_name, result (list of {text, embedding})
+        items = result.get("result", []) if isinstance(result, dict) else result
+        if isinstance(result, dict):
+            model_name = result.get("model_name")
+        else:
+            # Fallback: obtain model_name from the currently loaded engine model
+            try:
+                model_name = getattr(OrchestratorInterface.engine.embedding_model, "model_name", None)
+            except Exception:
+                model_name = None
+        embeddings = [EmbeddingItem(text=item["text"], embedding=item["embedding"]) for item in items]
+        return EmbeddingsResponse(embeddings=embeddings, model_name=model_name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -68,6 +97,7 @@ class RerankRequest(BaseModel):
 
 class RerankResponse(BaseModel):
     results: List[Tuple[int, float, str]] = Field(..., description="Ranked results as (index, score, document) tuples")
+    model_name: Optional[str] = Field(None, description="Name/ID of the model used")
 
 
 @router.post("/rerank", response_model=RerankResponse)
@@ -79,7 +109,17 @@ async def rerank(request: RerankRequest) -> RerankResponse:
             request.documents,
             request.top_k
         )
-        return RerankResponse(results=result)
+        # result is expected to be a dict with keys: model_name, result (list of tuples)
+        if isinstance(result, dict):
+            return RerankResponse(results=result.get("result"), model_name=result.get("model_name"))
+        else:
+            # Fallback: obtain model_name from the currently loaded engine model
+            engine_model_name = None
+            try:
+                engine_model_name = getattr(OrchestratorInterface.engine.reranker_model, "model_name", None)
+            except Exception:
+                engine_model_name = None
+            return RerankResponse(results=result, model_name=engine_model_name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -91,10 +131,12 @@ async def rerank(request: RerankRequest) -> RerankResponse:
 
 class ClipScoreResponse(BaseModel):
     score: float = Field(..., description="CLIP similarity score")
+    model_name: Optional[str] = Field(None, description="Name/ID of the model used")
 
 
 class ClipScoresResponse(BaseModel):
     scores: List[Tuple[str, float]] = Field(..., description="List of (text, score) pairs")
+    model_name: Optional[str] = Field(None, description="Name/ID of the model used")
 
 
 @router.post("/clip/score", response_model=ClipScoreResponse)
@@ -109,7 +151,23 @@ async def get_clip_score(
         img = Image.open(io.BytesIO(image_bytes))
 
         result = await OrchestratorInterface.get_clip_score(img, text)
-        return ClipScoreResponse(score=result)
+        if isinstance(result, dict):
+            # Prefer model_name from orchestrator; fallback to engine's currently loaded model
+            engine_model_name = None
+            try:
+                engine_model_name = getattr(OrchestratorInterface.engine.clip_model, "model_name", None)
+            except Exception:
+                engine_model_name = None
+            model_name = result.get("model_name") or engine_model_name
+            return ClipScoreResponse(score=result.get("result"), model_name=model_name)
+        else:
+            # Fallback: obtain model_name from the currently loaded engine model
+            engine_model_name = None
+            try:
+                engine_model_name = getattr(OrchestratorInterface.engine.clip_model, "model_name", None)
+            except Exception:
+                engine_model_name = None
+            return ClipScoreResponse(score=result, model_name=engine_model_name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -129,7 +187,23 @@ async def get_clip_scores(
         text_list = [text.strip() for text in texts.split(',')]
 
         result = await OrchestratorInterface.get_clip_scores(img, text_list)
-        return ClipScoresResponse(scores=result)
+        if isinstance(result, dict):
+            # Prefer model_name from orchestrator; fallback to engine's currently loaded model
+            engine_model_name = None
+            try:
+                engine_model_name = getattr(OrchestratorInterface.engine.clip_model, "model_name", None)
+            except Exception:
+                engine_model_name = None
+            model_name = result.get("model_name") or engine_model_name
+            return ClipScoresResponse(scores=result.get("result"), model_name=model_name)
+        else:
+            # Fallback: obtain model_name from the currently loaded engine model
+            engine_model_name = None
+            try:
+                engine_model_name = getattr(OrchestratorInterface.engine.clip_model, "model_name", None)
+            except Exception:
+                engine_model_name = None
+            return ClipScoresResponse(scores=result, model_name=engine_model_name)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

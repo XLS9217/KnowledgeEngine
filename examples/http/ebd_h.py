@@ -1,8 +1,10 @@
+import json
+
 import requests
 import numpy as np
 
 
-BASE_URL = "http://localhost:7009/api/v1"
+BASE_URL = "http://localhost:7009"
 
 
 def cosine_similarity(vec1, vec2) -> float:
@@ -29,30 +31,39 @@ def test_embedding_http():
             f"{BASE_URL}/embedding",
             json={"text": text1_en}
         )
-        ebd1 = response.json()["embedding"]
+        response.raise_for_status()
+        resp1 = response.json()
+        ebd1 = resp1.get("embedding")
+        model1 = resp1.get("model_name")
 
         # Get embedding for text2
         response = requests.post(
             f"{BASE_URL}/embedding",
             json={"text": text2_zh}
         )
-        ebd2 = response.json()["embedding"]
+        response.raise_for_status()
+        resp2 = response.json()
+        ebd2 = resp2.get("embedding")
+        model2 = resp2.get("model_name")
 
         # Get embedding for text3
         response = requests.post(
             f"{BASE_URL}/embedding",
             json={"text": text3_zh}
         )
-        ebd3 = response.json()["embedding"]
+        response.raise_for_status()
+        resp3 = response.json()
+        ebd3 = resp3.get("embedding")
+        model3 = resp3.get("model_name")
 
         # Calculate similarities
         sim_en_zh = cosine_similarity(ebd1, ebd2)
         sim_zh_zh = cosine_similarity(ebd3, ebd2)
 
         # Print results
-        print(f"Text 1 (EN): '{text1_en}'")
-        print(f"Text 2 (ZH): '{text2_zh}'")
-        print(f"Text 3 (ZH): '{text3_zh}'")
+        print(f"Text 1 (EN): '{text1_en}' | model: {model1 or 'unknown'}")
+        print(f"Text 2 (ZH): '{text2_zh}' | model: {model2 or 'unknown'}")
+        print(f"Text 3 (ZH): '{text3_zh}' | model: {model3 or 'unknown'}")
         print(f"\nSimilarity (EN-ZH): {sim_en_zh:.4f}")
         print(f"Similarity (ZH-ZH): {sim_zh_zh:.4f}")
         print(f"\nTest PASSED")

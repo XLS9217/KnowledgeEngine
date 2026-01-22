@@ -33,6 +33,12 @@ class ModelLoader:
         """
         cls.CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
+        # Ensure the registry is populated by importing the package that triggers adapter registration
+        if not model_map:
+            # Lazy import to trigger @register_model decorators in adapter modules
+            import importlib
+            importlib.import_module("src.model_objects")
+
         if model_name not in model_map:
             raise ValueError(
                 f"Model '{model_name}' is not registered. "
@@ -42,5 +48,7 @@ class ModelLoader:
         wrapper_class = model_map[model_name]
         wrapper_instance = wrapper_class()
         wrapper_instance.initialize(model_name, device, str(cls.CACHE_DIR))
+        # Attach model_name to the wrapper instance for downstream access
+        setattr(wrapper_instance, "model_name", model_name)
 
         return wrapper_instance
