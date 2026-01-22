@@ -12,8 +12,8 @@ logger = get_my_logger()
 logger.info("Starting the application")
 
 # Initialize the orchestrator engine
-logger.info("Initializing OrchestratorInterface with single_process_engine")
-OrchestratorInterface.initialize("single_process_engine")
+logger.info("Initializing OrchestratorInterface")
+OrchestratorInterface.initialize()
 logger.info("OrchestratorInterface initialized successfully")
 
 app = FastAPI()

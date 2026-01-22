@@ -20,7 +20,7 @@ class OrchestratorInterface:
     clip_model = None
 
     @classmethod
-    def initialize(cls, engine_name: str):
+    def initialize(cls):
         """Initialize and load default models. engine_name is ignored after refactor."""
         # Load default models directly
         cls.embedding_model = ModelLoader.load_model("Qwen/Qwen3-Embedding-0.6B", "cuda")
