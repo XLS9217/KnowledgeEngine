@@ -16,8 +16,11 @@ A FastAPI-based NLP task engine that provides low-level NLP services using local
 - Python 3.11+
 - CUDA 12.6 (for GPU acceleration)
 - Local model cache at `E:\model_cache` (models will be loaded from here first)
+- Docker with NVIDIA GPU support (for containerized deployment)
 
 ## Installation
+
+### Local Development
 
 This project uses [uv](https://github.com/astral-sh/uv) for dependency management:
 
@@ -25,6 +28,76 @@ This project uses [uv](https://github.com/astral-sh/uv) for dependency managemen
 # Install dependencies
 uv sync
 ```
+
+### Docker Deployment
+
+#### Prerequisites
+- Docker Desktop with WSL2 backend
+- NVIDIA Container Toolkit (for GPU support)
+- Pre-downloaded models in `E:\model_cache` or `E:\DockerVolumes\knowledge_engine`
+
+#### Build the Docker Image
+
+```bash
+docker build -t knowledgeengine .
+```
+
+#### Run as Daemon
+
+Run the container in detached mode with GPU support and model volume:
+
+```bash
+docker run -d \
+  --name knowledge-engine \
+  --gpus all \
+  -p 7009:7009 \
+  -v E:\DockerVolumes\knowledge_engine:/app/models \
+  --restart unless-stopped \
+  knowledgeengine
+```
+
+**Parameters:**
+- `-d`: Run in detached mode (daemon)
+- `--name knowledge-engine`: Container name for easy management
+- `--gpus all`: Enable all GPUs
+- `-p 7009:7009`: Map port 7009 to host
+- `-v E:\DockerVolumes\knowledge_engine:/app/models`: Mount model cache volume
+- `--restart unless-stopped`: Auto-restart on failure
+
+#### Container Management
+
+```bash
+# View logs
+docker logs knowledge-engine
+
+# Follow logs in real-time
+docker logs -f knowledge-engine
+
+# Stop the container
+docker stop knowledge-engine
+
+# Start the container
+docker start knowledge-engine
+
+# Restart the container
+docker restart knowledge-engine
+
+# Remove the container
+docker rm -f knowledge-engine
+```
+
+#### Pre-loading Models
+
+To avoid downloading models during container startup, copy them to the volume directory:
+
+```bash
+# Copy models from local cache to Docker volume
+cp -r E:\model_cache\models--Qwen--Qwen3-Embedding-0.6B E:\DockerVolumes\knowledge_engine\
+cp -r E:\model_cache\models--Qwen--Qwen3-Reranker-0.6B E:\DockerVolumes\knowledge_engine\
+cp -r E:\model_cache\models--openai--clip-vit-base-patch32 E:\DockerVolumes\knowledge_engine\
+```
+
+Models will persist in the volume across container restarts and work offline.
 
 ## Running the Server
 

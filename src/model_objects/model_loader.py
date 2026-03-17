@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Global model registry
 model_map = {}
@@ -17,7 +18,7 @@ def register_model(cls):
 class ModelLoader:
     """Acts like a factory for models"""
 
-    CACHE_DIR = Path(r"E:\model_cache")
+    CACHE_DIR = Path(os.environ.get("HF_HOME", r"E:\model_cache"))
 
     @classmethod
     def load_model(cls, model_name: str, device: str = "cpu"):
