@@ -1,7 +1,7 @@
 import requests
 
 
-BASE_URL = "http://localhost:7009/api/v1"
+BASE_URL = "http://localhost:7009"
 
 
 def test_similarity_bucketing(sentences: list[str], bucket_topics: list[str], lang: str):

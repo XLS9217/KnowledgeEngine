@@ -2,7 +2,7 @@ import requests
 from pathlib import Path
 
 
-BASE_URL = "http://localhost:7009/api/v1"
+BASE_URL = "http://localhost:7009"
 
 
 def test_clip_http():

@@ -1,7 +1,7 @@
 import requests
 
 
-BASE_URL = "http://localhost:7009/api/v1"
+BASE_URL = "http://localhost:7009"
 
 
 def test_batch_embedding_and_clustering(sentences: list[str], lang: str):
@@ -33,7 +33,7 @@ def test_batch_embedding_and_clustering(sentences: list[str], lang: str):
             for item in embeddings_result
         ]
 
-        print(f"✓ Got {len(data)} embeddings\n")
+        print(f"OK Got {len(data)} embeddings\n")
 
         # Test K-Means
         print("2. Testing K-Means Clustering (n_clusters=3)...")
@@ -59,7 +59,7 @@ def test_batch_embedding_and_clustering(sentences: list[str], lang: str):
             for text in cluster_texts:
                 print(f"  - {text}")
 
-        print(f"\n✓ K-Means completed\n")
+        print(f"\nOK K-Means completed\n")
 
         # Test Agglomerative Clustering
         print("3. Testing Agglomerative Clustering (n_clusters=3, linkage=ward)...")
@@ -86,7 +86,7 @@ def test_batch_embedding_and_clustering(sentences: list[str], lang: str):
             for text in cluster_texts:
                 print(f"  - {text}")
 
-        print(f"\n✓ Agglomerative completed\n")
+        print(f"\nOK Agglomerative completed\n")
 
         # Test Auto-Agglomerative Clustering
         print("4. Testing Auto-Agglomerative Clustering (max_clusters=5, linkage=ward)...")
@@ -113,7 +113,7 @@ def test_batch_embedding_and_clustering(sentences: list[str], lang: str):
             for text in cluster_texts:
                 print(f"  - {text}")
 
-        print(f"\n✓ Auto-Agglomerative completed")
+        print(f"\nOK Auto-Agglomerative completed")
         print(f"\n{'='*70}")
         print(f"All tests PASSED")
         print(f"{'='*70}")
